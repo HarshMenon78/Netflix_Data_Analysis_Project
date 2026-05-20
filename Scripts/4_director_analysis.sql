@@ -1,0 +1,84 @@
+-- 4_director_analysis :-
+
+/* Problem 7 : Who are the top 10 most frequent directors on Netflix? :-
+   - For this we will first create a subquery(in FROM statement) which will retrive director-wise count of contents that had been added to netflix.
+   - This happens because we put the "director" column in GROUP BY clause, hence the aggregated result of count of all the rows/contents there in netflix table will be shown corresponding to each director, for count of those rows in netflix table which has that particular director corresponding to it in thr director column.
+   - We also use the Ranking window function of DENSE_RANK()(this will assign same ranks to those row values having same content_count[on the descending order of which we are ranking them on the basis of], and the next row in order will recieve the next rank without gap), to find the rankings of each of these directors on the basis of their content_count(will assign ranks when the content_count is arranged in descending order for their directors since we mentioned ORDER BY content_count DESC, while there is no PARTITION here since we want to rank all the rows of the result-set of the subquery itself which are basically individual directors with their corresponding content_counts).
+   - In the main query i.e after the subquery is mentioned in FROM statement, in the main-query's WHERE clause we will filter out the ranks up untill 10(rnk <= 10), to get the top 10 most frequent directors on Netflix.
+*/
+SELECT
+    individual_director, 
+    content_count,
+    rnk
+FROM ( -- this subquery will give us the director-wise content_count and their corresponding ranks based on their content_count in descending order, which will help us in filtering out the top 10 most frequent directors on Netflix in the main query.
+    SELECT
+    TRIM(UNNEST(STRING_TO_ARRAY("director", ','))) AS individual_director, -- we had to mention the director column in "" because DIRECTOR is already a keyword in SQL. So here When we use the STRING_TO_ARRAY() on "director" column it will convert the values inside of directors column for those rows/contents who were associated to multiple directors in array of single strings containing individual directors, by converting their big sting containing all the individual directors into an array of smaller strings of individual directors with the precified delimiter(i.e ',') to break down the combined director column into individual directors. Then on top of that entity of each content showing their corresponding directors in an array format containing smaller string of each of the directors they are associated to, we will add the UNNEST() which will divide this distribution further in a way that each of the individual directors displayed by individual smaller strings inside of the array of combined directors, will be broken down to show the individual directors in seperate rows corresponding to their content rows, which might repeat in case they are associated to multiple directors, to show each of the directors they are associated in individual rows. The TRIM() is used to trim out the unwanted spaces in the entity/column showing individual director's name.
+        COUNT(*) AS content_count, -- will count the number of rows for each director from the netflix table, which will give us the count of content directed by each director.
+        DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS rnk -- using DENSE_RANK() window function to assign a rank to each director based on their content_count in descending order, so that the director with the highest content_count gets rank 1, the second highest gets rank 2 and so on. DENSE_RANK() is used instead of RANK() because if there are multiple directors with the same content_count, they will receive the same rank and the next rank will be the immediate next integer (i.e if two directors have the same content_count and are ranked 1, the next director will be ranked 2).
+    FROM
+        netflix
+    WHERE
+        "director" != '**Unknown**' -- filtering out the rows which have '**Unknown**' as director, since we are interested in finding the top 10 most frequent directors, and '**Unknown**' does not represent a specific director.
+    GROUP BY -- grouping the data by individual_director to get the aggregated result of content_count for each director separately, which will help us in ranking the directors based on their content_count.
+        individual_director
+) AS subquery
+WHERE rnk <= 10 -- filtering the result to get only the top 10 directors based on their content_count, which means we are interested in directors who have a rank of 10 or less.
+ORDER BY
+    content_count DESC;
+
+/* Problem 8 : Who are the top 5 directors separately for Movies and TV Shows do the same directors dominate both content types? :-
+   - For this we will first create a CTE named as top_directors, where-in we will find retrieve the type-wise content_count for each director, by mentioning type & director in GROUP BY clause and making it a cohort_group corresponding to which we are retrieving the aggregated result of count of all the individual rows of content from netflix table which fall within that particular group of content-type & director.
+   - Here one thing to not is that in the cohort group made in the 1st CTE of top_directors, we gave the first grouping priority to type, then to director, so that we get the type-wise content_counts for each of the directors in that type.
+   - Then in the second CTE named as rnk_directors, we will retrieve all the info mentioned in top_directors CTE and then assign ranks to the directors separately for each type of content(movies & tv shows) based on their content_count in descending order, by using DENSE_RANK() window function with 'PARTITION BY type' which ensures that the individual rows inside of each type be ranked, based on their director's content counts, since we mentioned 'ORDER BY content_count DESC' in the window function, the director with the highest content_count in each type will get rank 1, the second highest will get rank 2 and so on. DENSE_RANK() is used instead of RANK() because if there are multiple directors with the same content_count in a particular type, they will receive the same rank and the next rank will be the immediate next integer in order.
+   - Then in the main query , in its WHERE clause we will filter out the ranks up untill 5(rnk <= 5), to get the top 5 directors separately for movies and tv shows based on their content_count in the result-set of rnk_directors(showing type-wise rank of directors based on their content_count).
+*/
+WITH top_directors AS ( -- this CTE will give us the director-wise content_count for each type of content(movies & tv shows) separately, by grouping the data by both type and director columns, which will help us in finding the top directors separately for movies and tv shows in the next CTE.
+SELECT
+    type, -- will display the type of content(movies or tv shows) corresponding to each director, their content_content_count of that type, and their corresponding ranks based on their content_count of that type when arranged in descending order, which will help us in finding the top 5 directors separately for movies and tv shows based on their content_count in the main query.
+    TRIM(UNNEST(STRING_TO_ARRAY("director", ','))) AS individual_director, -- we had to mention the director column in "" because DIRECTOR is already a keyword in SQL. So here When we use the STRING_TO_ARRAY() on "director" column it will convert the values inside of directors column for those rows/contents who were associated to multiple directors in array of single strings containing individual directors, by converting their big sting containing all the individual directors into an array of smaller strings of individual directors with the precified delimiter(i.e ',') to break down the combined director column into individual directors. Then on top of that entity of each content showing their corresponding directors in an array format containing smaller string of each of the directors they are associated to, we will add the UNNEST() which will divide this distribution further in a way that each of the individual directors displayed by individual smaller strings inside of the array of combined directors, will be broken down to show the individual directors in seperate rows corresponding to their content rows, which might repeat in case they are associated to multiple directors, to show each of the directors they are associated in individual rows. The TRIM() is used to trim out the unwanted spaces in the entity/column showing individual director's name.
+    COUNT(*) AS content_count -- will count the number of rows for each director from the netflix table, which will give us the count of content directed by each director, and since we are grouping the data by both type and director columns, it will give us the content_count for each director separately for movies and tv shows.
+FROM
+    netflix
+WHERE
+    "director" != '**Unknown**' -- filtering out the rows which have '**Unknown**' as director, since we are interested in finding the top directors separately for movies and tv shows, and '**Unknown**' does not represent a specific director.
+GROUP BY -- grouping the data by both type and director columns to create their cohort groups and get the aggregated result of content_count for each director separately for movies and tv shows, which will help us in ranking the directors based on their content_count separately for movies and tv shows in the next CTE.
+    type,
+    individual_director
+), rnk_directors AS ( -- this CTE will retrieve all the info mentioned in top_directors CTE and rank the directors separately for each type of content(movies & tv shows) based on their content_count in descending order, by using DENSE_RANK() window function with PARTITION BY type, which will help us in finding the top 5 directors separately for movies and tv shows in the main query.
+SELECT
+    type,
+    individual_director,
+    content_count,
+    DENSE_RANK() OVER(PARTITION BY type ORDER BY content_count DESC) AS director_rnk -- will rank the individual rows of each type(movies & tv shows) in descending order of their content_count of their individual directors, thats because we used PARTITION BY type hence for each category in type column(movies & tv shows) the ranking will be done separately assigning the ranks to each of the rows(director's and their content count) belonging to that partition, and since we used ORDER BY content_count DESC, the director with the highest content_count in each type will get rank 1, the second highest will get rank 2 and so on. DENSE_RANK() is used instead of RANK() because if there are multiple directors with the same content_count in a particular type, they will receive the same rank and the next rank will be the immediate next integer (i.e if two directors have the same content_count and are ranked 1 in movies category, the next director in movies category will be ranked 2).
+FROM
+    top_directors
+)
+SELECT
+    type,
+    individual_director,
+    content_count,
+    director_rnk
+FROM -- retrieving all the info mentioned in rnk_directors CTE, which contains the director-wise content_count for each type of content(movies & tv shows) separately along with their respective ranks based on their content_count, which will help us in finding the top 5 directors separately for movies and tv shows based on their content_count in the result-set.
+    rnk_directors
+WHERE -- filtering the result to get only the top 5 directors separately for movies and tv shows based on their content_count, which means we are interested in directors who have a rank of 5 or less in their respective type category.
+    director_rnk <= 5;
+
+/* Problem 9 : Which directors have worked across both Movies and TV Shows on Netflix? :-
+   - Here we will firstly retrieve the data for each director and count their content, by mentioning the director column in GROUP BY clause, so that we can get the aggregated result of content_count for each director separately, which will help us in finding out the directors who have worked across both Movies and TV Shows on Netflix in the main query.
+   - W will then find the COUNT(DISTINCT type) corresponding to each director, which will give us the COUNT of each of the distinct categories in the type column in our netflix table, but only for those rows which belong to that particular director.
+   - Normally the COUNT(DISTINCT type) will be 2 for the entire netflix dataset, since there are only 2 types of content being Movies and TV Shows. But when we find the COUNT(DISTINCT type) corresponding to each director(since that has been mentioned in GROUP BY) it will find how many categories are there inside of the type column corresponding to all those from the netflix table which has that director corresponding to it in the director column(i.e of all the rows/contents in netflix table belonging to that director). 
+*/
+SELECT
+    TRIM(UNNEST(STRING_TO_ARRAY("director", ','))) AS individual_director, -- we had to mention the director column in "" because DIRECTOR is already a keyword in SQL. So here When we use the STRING_TO_ARRAY() on "director" column it will convert the values inside of directors column for those rows/contents who were associated to multiple directors in array of single strings containing individual directors, by converting their big sting containing all the individual directors into an array of smaller strings of individual directors with the precified delimiter(i.e ',') to break down the combined director column into individual directors. Then on top of that entity of each content showing their corresponding directors in an array format containing smaller string of each of the directors they are associated to, we will add the UNNEST() which will divide this distribution further in a way that each of the individual directors displayed by individual smaller strings inside of the array of combined directors, will be broken down to show the individual directors in seperate rows corresponding to their content rows, which might repeat in case they are associated to multiple directors, to show each of the directors they are associated in individual rows. The TRIM() is used to trim out the unwanted spaces in the entity/column showing individual director's name.
+    COUNT(*) AS content_count, -- will count the number of rows for each director from the netflix table, which will give us the count of content directed by each director, and since we are grouping the data by director column, it will give us the content_count for each director separately, which will help us in finding out the directors who have worked across both Movies and TV Shows on Netflix in the main query.
+    COUNT(DISTINCT type) AS type_count_of_director -- will find the count of distinct categories in the type column of all the rows of that particular director since thats what we are GROUPING the data by, and it will help us in filtering out the directors who have worked across both Movies and TV Shows on Netflix, since if a director has worked across both categories then the count of distinct type for that director will be 2.
+FROM
+    netflix
+WHERE
+    "director" != '**Unknown**' -- filtering out the rows which have '**Unknown**' as director, since we are interested in finding the directors who have worked across both Movies and TV Shows on Netflix, and '**Unknown**' does not represent a specific director.
+GROUP BY -- grouping the data by director to get the aggregated result of content_count for each director separately, and also to find the count of distinct type for each director, which will help us in filtering out the directors who have worked across both Movies and TV Shows on Netflix in the next step using HAVING clause.
+    individual_director 
+HAVING -- since we can't filter out the aggregation result corresponding to groups using WHERE clause, we will use HAVING clause to filter out the directors who have worked across both Movies and TV Shows on Netflix.
+    COUNT(DISTINCT type) = 2 -- will filter out all the directors having type_count_of_director(i.e count of distinct types for each director) as 2, which means they have worked across both Movies and TV Shows on Netflix, since there are only 2 categories in the type column of netflix table which are Movies and TV Shows, hence if a director has worked across both categories then the count of distinct type for that director will be 2.
+ORDER BY -- to retrieve the result-set's rows in descending order of content_count, so that the directors who have worked across both Movies and TV Shows on Netflix with higher content_count will be shown at the top of the result-set.
+    content_count DESC;
