@@ -286,6 +286,6 @@ All 16 result-set CSVs were imported into Power BI via Power Query. Data types w
 ## 👤 Author
 
 **Harsh Menon**
-Aspiring Data Analyst — Excel · SQL · Power BI
+— Aspiring Data Analyst — Excel · SQL · Power BI
 
 [![GitHub](https://img.shields.io/badge/GitHub-HarshMenon78-181717?style=flat&logo=github)](https://github.com/HarshMenon78)
