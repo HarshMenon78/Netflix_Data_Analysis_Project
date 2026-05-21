@@ -1,12 +1,12 @@
 # 🎬 Netflix Content Analytics — End-to-End Data Analysis Project
 
-![Excel](https://img.shields.io/badge/Microsoft%20Excel-Data%20Cleaning-217346?style=for-the-badge)
+![Excel](https://img.shields.io/badge/Microsoft%20Excel-Data%20Cleaning-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-SQL%20Analysis-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=for-the-badge)
-![VS Code](https://img.shields.io/badge/VS%20Code-Query%20Execution%20%26%20GitHub%20Integration-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
-![DBeaver](https://img.shields.io/badge/DBeaver-Data%20Viewer-382923?style=for-the-badge)
-![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-SQL%20Autocompletion-000000?style=for-the-badge&logo=github&logoColor=white)
-![Claude AI](https://img.shields.io/badge/Claude%20AI-Code%20Review%20%26%20Documentation-CC785C?style=for-the-badge)
+![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=for-the-badge&logo=power-bi&logoColor=white)
+![VS Code](https://img.shields.io/badge/VS%20Code-Query%20Execution%20%26%20GitHub%20Integration-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![DBeaver](https://img.shields.io/badge/DBeaver-Data%20Viewer-382923?style=for-the-badge&logo=dbeaver&logoColor=white)
+![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-SQL%20Comments%20Documentation-000000?style=for-the-badge&logo=github&logoColor=white)
+![Claude AI](https://img.shields.io/badge/Claude%20AI-Code%20Review%20%26%20Documentation-CC785C?style=for-the-badge&logo=claude&logoColor=white)
 
 An end-to-end data analytics project analyzing Netflix's content catalog using **Microsoft Excel**, **PostgreSQL**, and **Power BI**. The project follows a real-world analyst workflow — raw data ingestion, cleaning, SQL-based analysis, and interactive dashboard reporting — addressing 15 business problems across content distribution, growth trends, genre patterns, director insights, geographic reach, and audience classification.
 
@@ -90,13 +90,13 @@ Netflix_Data_Analysis_Project/
 
 | Tool | Role in this project |
 |---|---|
-| **Microsoft Excel 2019** | Data ingestion, cleaning, deduplication, blank handling, exploratory pivot tables |
-| **PostgreSQL via pgAdmin 4** | Database creation, table schema setup, data import via COPY command |
-| **VS Code** | Writing and executing SQL analysis scripts, GitHub integration for local and remote repository management, README authoring and change tracking |
+| **Microsoft Excel 2019** | Data ingestion, cleaning, Removing duplicates, blank handling, exploratory pivot tables |
+| **PostgreSQL via pgAdmin 4** | Database creation, table schema setup, data reviewing after manipulating |
+| **VS Code** | Importing cleaned data into database created in PostgreSQL, Writing and executing SQL analysis scripts, GitHub integration for local and remote repository management, README authoring and change tracking |
 | **DBeaver** | Viewing table rows and data contents without the need for querying, used to save time during data validation and exploration |
 | **Power BI Desktop** | Result-set import via Power Query, DAX measures, interactive 4-page dashboard |
-| **GitHub Copilot** | SQL query autocompletion and auto-generation of inline comments beside each query line across all scripts in `Scripts/` |
-| **Claude AI** | AI-assisted code review, SQL comment documentation, and project planning support |
+| **GitHub Copilot** | Automation of pre-written SQL query's inline comments beside each query lines (mentioned in "--") which repeat across all scripts in `Scripts/`(explaining the role of all the individual lines of SQL code/query) |
+| **Claude AI** | AI-assisted code review, project-documentation assistance, and project planning assistance to resolve bottlenecks on the independent plan — **All the major planning & queries have been scripted independently for practicing and sharpening the tool based skills** |
 
 ---
 
@@ -148,7 +148,7 @@ FROM 'your/local/path/to/netflix_clean_data.csv'
 WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF8');
 ```
 
-> ⚠️ Update the file path in the COPY command to your local path before running.
+⚠️ Update the file path in the FROM command to your local path(of the cleaned data which needs to be imported to the empty database we just created in our PostgreSQL server) before running.
 
 ---
 
