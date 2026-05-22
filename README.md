@@ -96,7 +96,7 @@ Netflix_Data_Analysis_Project/
 | **DBeaver** | Viewing table rows and data contents without the need for querying, used to save time during data validation and exploration |
 | **Power BI Desktop** | Result-set import via Power Query, DAX measures, interactive 4-page dashboard |
 | **GitHub Copilot** | Automation of pre-written SQL query's inline comments beside each query lines (mentioned in "--") which repeat across all scripts in `Scripts/`(explaining the role of all the individual lines of SQL code/query) |
-| **Claude AI** | AI-assisted code review, project-documentation assistance, and project planning assistance to resolve bottlenecks on the independent plan — **All the major planning & queries have been scripted independently for practicing and sharpening the tool based skills** |
+| **Claude AI** | AI-assisted code review, project-documentation assistance, and project planning assistance to resolve bottlenecks on the independent plan — **All the major planning & queries have been scripted independently(i.e without using these above mentioned AI tools) for practicing and sharpening the tool based knowledge & skills** |
 
 ---
 
