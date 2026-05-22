@@ -135,3 +135,14 @@ ORDER BY -- makes sure that the result displayed in the result-set of this query
     content_count DESC
 LIMIT -- Since we need the top 10 countries based on their content_count, and see their corresponding content distribution.
     10;
+
+
+---------------------------------------------------
+
+/* Basic query to find all the individual countries(which in PowerBI can be used to find their count) :- */
+SELECT
+    TRIM(UNNEST(STRING_TO_ARRAY(country, ','))) AS countries -- similar to the previous queries, we are using STRING_TO_ARRAY() to split the original country column into an array of individual country names(for those rows of content associated with multiple countries, which are mentioned in a single big string where each countries is seperated by commas), and then using UNNEST() to expand the array into individual rows(for previously mentioned rows containing contents with corresponding array of strings of individual countries[which was converted into array format from a big string format seperated by commas], hence all the individual countries[mentioned in the array] associated with the multi country associated content will be displayed corresponding to them in individual rows), where multiple country-associated contents will repeat in multiple rows to individually show each country associated with that content in a seperate row, and then using TRIM() to remove any leading or trailing spaces from the newly created individual country name showing column.
+FROM
+    netflix
+WHERE
+    country != '**Unknown**'; -- to ensure that we only consider the known/mentioned content producing countries in our analysis, we can use the WHERE clause to filter out any rows where the country is not mentioned in the original country column, as we are only interested in analyzing the known/mentioned content producing countries and not the unknown ones.

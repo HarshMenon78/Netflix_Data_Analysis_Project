@@ -82,3 +82,14 @@ HAVING -- since we can't filter out the aggregation result corresponding to grou
     COUNT(DISTINCT type) = 2 -- will filter out all the directors having type_count_of_director(i.e count of distinct types for each director) as 2, which means they have worked across both Movies and TV Shows on Netflix, since there are only 2 categories in the type column of netflix table which are Movies and TV Shows, hence if a director has worked across both categories then the count of distinct type for that director will be 2.
 ORDER BY -- to retrieve the result-set's rows in descending order of content_count, so that the directors who have worked across both Movies and TV Shows on Netflix with higher content_count will be shown at the top of the result-set.
     content_count DESC;
+
+
+--------------------
+
+/* Basic query to find all the individual directors :- */
+SELECT
+    TRIM(UNNEST(STRING_TO_ARRAY("director", ','))) AS individual_director -- we had to mention the director column in "" because DIRECTOR is already a keyword in SQL. So here When we use the STRING_TO_ARRAY() on "director" column it will convert the values inside of directors column for those rows/contents who were associated to multiple directors in array of smaller strings containing individual directors, by converting their big sting containing all the individual directors into an array of smaller strings of individual directors with the specified delimiter(i.e ',') to break down the combined director column into individual directors. Then on top of that entity of each content showing their corresponding directors in an array format containing smaller string of each of the directors they are associated to, we will add the UNNEST() which will divide this distribution further in a way that each of the individual directors displayed by individual smaller strings inside of the array of combined directors, will be broken down to show the individual directors in seperate rows corresponding to their content rows, which might repeat in case they are associated to multiple directors, to show each of the directors they are associated in individual rows. The TRIM() is used to trim out the unwanted spaces in the entity/column showing individual director's name.
+FROM
+    netflix
+WHERE
+    "director" != '**Unknown**' -- filtering out the rows which have '**Unknown**' as director, since we are interested in finding the count of all the individual directors, and '**Unknown**' does not represent a specific director.
