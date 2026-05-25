@@ -8,7 +8,7 @@
 ![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-SQL%20Comments%20Documentation-000000?style=for-the-badge&logo=github&logoColor=white)
 ![Claude AI](https://img.shields.io/badge/Claude%20AI-Code%20Review%20%26%20Documentation-CC785C?style=for-the-badge&logo=claude&logoColor=white)
 
-An end-to-end data analytics project analyzing Netflix's content catalog using **Microsoft Excel**, **PostgreSQL**, and **Power BI**. The project follows a real-world analyst workflow — raw data ingestion, cleaning, SQL-based analysis, and interactive dashboard reporting — addressing 15 business problems across content distribution, growth trends, genre patterns, director insights, geographic reach, and audience classification.
+An end-to-end data analysis project analyzing Netflix's content catalog using **Microsoft Excel**, **PostgreSQL**, and **Power BI**. The project follows a real-world analyst workflow — raw data ingestion, cleaning, SQL-based analysis, and interactive dashboard reporting — addressing 15 business problems across content distribution, growth trends, genre patterns, director insights, geographic reach, and audience classification.
 
 ---
 
