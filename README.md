@@ -1,4 +1,4 @@
-# 🎬 Netflix Content Analytics — End-to-End Data Analysis Project
+# 🎬 Netflix Content Analysis — End-to-End Data Analysis Project
 
 ![Excel](https://img.shields.io/badge/Microsoft%20Excel-Data%20Cleaning-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-SQL%20Analysis-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
